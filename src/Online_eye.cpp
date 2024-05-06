@@ -127,7 +127,7 @@ void Online_eye::eyeCallback(const eye_decoder::Eye::ConstPtr& msg) {
 
         if(l && r && this->cont_frame_ < this->th_frame_){
             this->cont_frame_ ++;
-            std::cout << "l_x:" << p_l.x - mean_l_center_.x << " r_x: " << p_r.x - mean_r_center_.x << std::endl;
+            //std::cout << "l_x:" << p_l.x - mean_l_center_.x << " r_x: " << p_r.x - mean_r_center_.x << std::endl;
         }
         
         if(this->cont_frame_ >= this->th_frame_ && !this->just_repeated_){
@@ -135,7 +135,7 @@ void Online_eye::eyeCallback(const eye_decoder::Eye::ConstPtr& msg) {
             feedback_cvsa::Repeat_trial srv;
             srv.request.class2repeat = this->c_class_;
             if(this->srv_.call(srv)) {
-                std::cout << "Repeat trial of class " << this->c_class_ << std::endl;
+                ROS_INFO("Repeat trial of class %d", this->c_class_);
             }else{
                 ROS_ERROR("Failed to call service");
             }
