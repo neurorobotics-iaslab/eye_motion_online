@@ -83,9 +83,9 @@ void Online_eye::eventsCallback(const rosneuro_msgs::NeuroEvent::ConstPtr& msg) 
     }
 
     // check for calibration with eyes looking to the center of the screen
-    if(this->in_calibration_ && msg->event == this->classes_.at(0)){
+    if(this->in_calibration_ && msg->event == eye::Center_event){
         this->calib_center_ = true;
-    }else if(this->calib_center_ && msg->event == this->classes_.at(0) + feedback::Events::Off){
+    }else if(this->calib_center_ && msg->event ==  eye::Center_event + feedback::Events::Off){
         this->calib_center_ = false;
         this->mean_l_center_ = this->mean(this->l_center_);
         this->mean_r_center_ = this->mean(this->r_center_);
@@ -100,6 +100,7 @@ void Online_eye::eventsCallback(const rosneuro_msgs::NeuroEvent::ConstPtr& msg) 
         auto find = std::find(this->classes_.begin(), this->classes_.end(), msg->event);
         if(find != this->classes_.end()){
             this->c_class_ = msg->event;
+            this->cont_frame_ = 0;
         }else if(msg->event == feedback::Events::CFeedback) {
             this->in_online_cf_ = true;
         }else if(msg->event == feedback::Events::CFeedback + feedback::Events::Off || msg->event == feedback::Events::Miss || msg->event == feedback::Events::Hit) {
@@ -124,10 +125,9 @@ void Online_eye::eyeCallback(const eye_decoder::Eye::ConstPtr& msg) {
         bool l = p_l.x > this->mean_l_center_.x + this->std_l_center_.x || p_l.x < this->mean_l_center_.x - this->std_l_center_.x;
         bool r = p_r.x > this->mean_r_center_.x + this->std_r_center_.x || p_r.x < this->mean_r_center_.x - this->std_r_center_.x;
 
-        std::cout << "l_x:" << p_l.x - mean_l_center_.x << " r_x: " << p_r.x - mean_r_center_.x << std::endl;
-
-        if(l && r){
+        if(l && r && this->cont_frame_ < this->th_frame_){
             this->cont_frame_ ++;
+            std::cout << "l_x:" << p_l.x - mean_l_center_.x << " r_x: " << p_r.x - mean_r_center_.x << std::endl;
         }
         
         if(this->cont_frame_ >= this->th_frame_ && !this->just_repeated_){

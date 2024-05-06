@@ -14,6 +14,7 @@
 
 
 namespace eye{
+    static const int Center_event = 735;
 
 class Online_eye{
     public:
