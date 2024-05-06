@@ -83,17 +83,17 @@ void Online_eye::eventsCallback(const rosneuro_msgs::NeuroEvent::ConstPtr& msg) 
     }
 
     // check for calibration with eyes looking to the center of the screen
-    if(this->in_calibration_ && msg->event == feedback::Events::CFeedback){
+    if(this->in_calibration_ && msg->event == this->classes_.at(0)){
         this->calib_center_ = true;
-    }else if(this->calib_center_ && msg->event == feedback::Events::CFeedback + feedback::Events::Off){
+    }else if(this->calib_center_ && msg->event == this->classes_.at(0) + feedback::Events::Off){
         this->calib_center_ = false;
         this->mean_l_center_ = this->mean(this->l_center_);
         this->mean_r_center_ = this->mean(this->r_center_);
         this->std_l_center_ = this->std(this->l_center_, this->mean_l_center_);
         this->std_r_center_ = this->std(this->r_center_, this->mean_r_center_);
 
-        std::cout << "m_l_x: " << this->mean_l_center_.x << " std_x: " << this->std_l_center_.x << std::endl;
-        std::cout << "m_r_x: " << this->mean_r_center_.x << " std_x: " << this->std_r_center_.x << std::endl;
+        //std::cout << "m_l_x: " << this->mean_l_center_.x << " std_x: " << this->std_l_center_.x << std::endl;
+        //std::cout << "m_r_x: " << this->mean_r_center_.x << " std_x: " << this->std_r_center_.x << std::endl;
     }
 
     if(!this->in_calibration_) {
