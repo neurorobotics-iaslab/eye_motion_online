@@ -13,7 +13,11 @@ find_package(catkin REQUIRED COMPONENTS
              eye_decoder
              feedback_cvsa
              geometry_msgs
+             sensor_msgs
+             cv_bridge
              )
+
+find_package(OpenCV REQUIRED)
 
 catkin_package(
   INCLUDE_DIRS 
@@ -27,6 +31,7 @@ catkin_package(
     message_runtime
     eye_decoder
     geometry_msgs
+    sensor_msgs
   DEPENDS
 )
 
@@ -37,14 +42,17 @@ catkin_package(
 
 include_directories(include 
                     ${catkin_INCLUDE_DIRS}
+                    ${OpenCV_INCLUDE_DIRS} 
                     )
 
 add_library(${PROJECT_NAME}    
             src/Online_eye.cpp
+            src/Offline_cf.cpp
             )
 
 target_link_libraries(${PROJECT_NAME} 
                       ${catkin_LIBRARIES}
+                      ${OpenCV_LIBS}
                       )
 
 add_dependencies(${PROJECT_NAME} 
@@ -56,5 +64,10 @@ add_dependencies(${PROJECT_NAME}
 #################
 add_executable(online_eye_node src/online_eye_node.cpp)
 target_link_libraries(online_eye_node  ${PROJECT_NAME}
+                                    ${catkin_LIBRARIES}
+                                    )
+
+add_executable(offline_cf_node src/offline_cf_node.cpp)
+target_link_libraries(offline_cf_node  ${PROJECT_NAME}
                                     ${catkin_LIBRARIES}
                                     )
